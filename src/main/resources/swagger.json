@@ -1,0 +1,292 @@
+{
+	"swagger" : "2.0",
+	"info" : {
+		"description" : "Radar API",
+		"version" : "1.0",
+		"title" : "Radar Service",
+		"license" : {
+			"name" : "Apache License Version 2.0"
+		}
+	},
+	"host" : "{{host}}",
+	"basePath" : "{{basePath}}",
+	"tags" : [{
+			"name" : "radar-controller",
+			"description" : "Radar Controller"
+		}
+	],
+	"paths" : {
+		"/api/url/{id}" : {
+			"get" : {
+				"tags" : ["radar-controller"],
+				"summary" : "url",
+				"operationId" : "url",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [{
+						"name" : "id",
+						"in" : "path",
+						"description" : "id",
+						"required" : true,
+						"type" : "string"
+				}],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"type" : "array",
+							"items" : {
+								"type" : "string"
+							}
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		},
+		"/api/list" : {
+			"get" : {
+				"tags" : ["radar-controller"],
+				"summary" : "list",
+				"operationId" : "list",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"type" : "array",
+							"items" : {
+								"$ref" : "#/definitions/RadarSiteDTO"
+							}
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		},
+		"/api/{id}" : {
+			"get" : {
+				"tags" : ["radar-controller"],
+				"summary" : "readById",
+				"operationId" : "readById",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [{
+						"name" : "id",
+						"in" : "path",
+						"description" : "id",
+						"required" : true,
+						"type" : "string"
+					}
+				],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/RadarSiteDTO"
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		},
+		"/api/{latitude}/{longitude}/nearest" : {
+			"get" : {
+				"tags" : ["radar-controller"],
+				"summary" : "readNearest",
+				"operationId" : "readNearest",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [{
+						"name" : "latitude",
+						"in" : "path",
+						"description" : "latitude",
+						"required" : true,
+						"type" : "double"
+					},{
+						"name" : "longitude",
+						"in" : "path",
+						"description" : "longitude",
+						"required" : true,
+						"type" : "double"
+					}
+				],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/RadarSiteDTO"
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		},
+		"/api/image/metaData" : {
+			"post" : {
+				"tags" : ["radar-controller"],
+				"summary" : "readImageMetaData",
+				"operationId" : "readImageMetaData",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [{
+						"name" : "urlSpec",
+						"in" : "body",
+						"description" : "urlSpec",
+						"required" : true,
+						"type" : "string"
+					}
+				],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/RadarImageDTO"
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		},
+		"/api/image" : {
+			"post" : {
+				"tags" : ["radar-controller"],
+				"summary" : "readImage",
+				"operationId" : "readImage",
+				"consumes" : ["application/json"],
+				"produces" : ["*/*"],
+				"parameters" : [{
+						"name" : "urlSpec",
+						"in" : "body",
+						"description" : "urlSpec",
+						"required" : true,
+						"type" : "string"
+					}
+				],
+				"responses" : {
+					"200" : {
+						"description" : "OK",
+						"schema" : {
+							"type" : "string",
+							"format" : "binary"
+						}
+					},
+					"401" : {
+						"description" : "Unauthorized"
+					},
+					"403" : {
+						"description" : "Forbidden"
+					},
+					"404" : {
+						"description" : "Not Found"
+					}
+				}
+			}
+		}
+	},
+	"definitions" : {
+		"RadarSiteDTO" : {
+			"type" : "object",
+			"properties" : {
+				"nexradSystem" : {
+					"type" : "string"
+				},
+				"icao" : {
+					"type" : "string"
+				},
+				"rdaLocation" : {
+					"type" : "string"
+				},
+				"responsibleWFO" : {
+					"type" : "string"
+				},
+				"wfo" : {
+					"type" : "string"
+				},
+				"equipment" : {
+					"type" : "string"
+				},
+				"latitude" : {
+					"type" : "number",
+					"format" : "double"
+				},
+				"longitude" : {
+					"type" : "number",
+					"format" : "double"
+				}				
+			}
+		},
+		"RadarImageDTO" : {
+			"type" : "object",
+			"properties" : {
+				"crs" : {
+					"type" : "string"
+				},
+				"lowerCorner" : {
+					"type" : "array",
+					"items" : {
+						"type" : "number",
+						"format" : "double"
+					}
+				},
+				"upperCorner" : {
+					"type" : "array",
+					"items" : {
+						"type" : "number",
+						"format" : "double"
+					}
+				},
+				"width" : {
+					"type" : "number",
+					"format" : "integer"
+				},
+				"height" : {
+					"type" : "number",
+					"format" : "integer"
+				}				
+			}
+		}
+	}
+}
