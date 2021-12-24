@@ -11,6 +11,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.referencing.factory.DeferredAuthorityFactory;
+import org.geotools.util.WeakCollectionCleaner;
 
 import ca.datamagic.noaa.radar.Importer;
 import ca.datamagic.noaa.radar.dao.RadarSiteDAO;
@@ -50,5 +52,9 @@ public class RadarContextListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		logger.debug("contextDestroyed");
+		DeferredAuthorityFactory.exit();
+		if (WeakCollectionCleaner.DEFAULT != null) {
+			WeakCollectionCleaner.DEFAULT.exit();
+		}
 	}
 }
