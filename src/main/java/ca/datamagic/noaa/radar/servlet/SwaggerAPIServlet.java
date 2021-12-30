@@ -7,14 +7,13 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @author Greg
@@ -22,13 +21,13 @@ import org.apache.logging.log4j.Logger;
  */
 public class SwaggerAPIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = LogManager.getLogger(SwaggerAPIServlet.class);
+	private static Logger logger = Logger.getLogger(SwaggerAPIServlet.class.getName());
 	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			String requestUrl = request.getRequestURL().toString();
-			logger.debug("requestUrl: " + requestUrl);
+			logger.info("requestUrl: " + requestUrl);
 			URL url = new URL(requestUrl);
 			StringBuffer host = new StringBuffer();
 			host.append(url.getHost());
@@ -46,7 +45,7 @@ public class SwaggerAPIServlet extends HttpServlet {
 			response.setContentType("application/json");
 			response.getWriter().println(theString);
 		} catch (Throwable t) {
-			logger.error("Exception", t);
+			logger.severe("Throwable: " + t.getMessage());
 			throw new IOError(t);
 		}
 	}

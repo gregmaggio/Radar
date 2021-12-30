@@ -81,8 +81,8 @@ public class RadarSiteDAOTester {
 	
 	@Test
 	public void test1() throws Exception {
-		double latitude = 32.8481029;
-	    double longitude = -96.853395;
+		double latitude = 32.53300575745244;
+	    double longitude = -117.58666254580021;
 	    double distance = 100;
 	    String units = "statute miles";
 		RadarSiteDAO dao = new RadarSiteDAO();
@@ -102,4 +102,7 @@ public class RadarSiteDAOTester {
 		Gson gson = new Gson();
 		logger.info(gson.toJson(sites));
 	}
+	
+	//32.53300575745244/-117.58666254580021
+	
 }

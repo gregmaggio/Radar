@@ -11,6 +11,8 @@ ADD target/radar-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
 
 RUN jar xf /usr/local/tomcat/webapps/ROOT.war /usr/local/tomcat/webapps/ROOT
 
+ENV GEOSERVER_DATA_DIR=/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/data
+	
 #RUN chmod +x /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/importfromjson.sh
 #CMD ["/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/importfromjson.sh"]
 

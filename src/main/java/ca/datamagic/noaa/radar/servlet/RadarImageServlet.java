@@ -5,15 +5,13 @@ package ca.datamagic.noaa.radar.servlet;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 
@@ -27,20 +25,20 @@ import ca.datamagic.util.IOUtils;
  */
 public class RadarImageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = LogManager.getLogger(RadarImageServlet.class);
+	private static Logger logger = Logger.getLogger(RadarImageServlet.class.getName());
 	private static final Pattern metaDataPattern = Pattern.compile("/metadata", Pattern.CASE_INSENSITIVE);
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			String pathInfo = request.getPathInfo();
-			logger.debug("pathInfo: " + pathInfo);
+			logger.info("pathInfo: " + pathInfo);
 			String urlSpec = IOUtils.readEntireStream(request.getInputStream());
-			logger.debug("urlSpec: " + urlSpec);
+			logger.info("urlSpec: " + urlSpec);
 			if ((pathInfo != null) && (pathInfo.length() > 0)) {
 				Matcher metaDataMatcher = metaDataPattern.matcher(pathInfo);
 				if (metaDataMatcher.find()) {
-					logger.debug("metaData");				
+					logger.info("metaData");				
 					RadarSiteDAO dao = new RadarSiteDAO();
 					RadarImageDTO radarImage = dao.readImageMetaData(urlSpec);
 					String json = (new Gson()).toJson(radarImage);
@@ -50,7 +48,7 @@ public class RadarImageServlet extends HttpServlet {
 				}
 			}
 			if ((pathInfo == null) || (pathInfo.length() < 1)) {
-				logger.debug("image");				
+				logger.info("image");				
 				RadarSiteDAO dao = new RadarSiteDAO();
 				byte[] imageBytes = dao.readImageBytes(urlSpec);
 				response.setContentType("image/png");
@@ -59,7 +57,7 @@ public class RadarImageServlet extends HttpServlet {
 			}
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
 		} catch (Throwable t) {
-			logger.error("Exception", t);
+			logger.severe("Throwable: " + t.getMessage());
 			throw new IOError(t);
 		}
 	}

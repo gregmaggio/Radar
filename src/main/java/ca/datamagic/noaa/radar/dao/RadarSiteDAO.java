@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.data.DataStore;
@@ -71,7 +70,7 @@ import ca.datamagic.util.IOUtils;
  *
  */
 public class RadarSiteDAO {
-	private static final Logger logger = LogManager.getLogger(RadarSiteDAO.class);
+	private static final Logger logger = Logger.getLogger(RadarSiteDAO.class.getName());
 	private static final String RADAR_SITE_URL = "https://www.roc.noaa.gov/WSR88D/Program/SiteID/Network_Sites_iframe.asp";	
 	private static final String RADAR_DATA_URL = "https://mrms.ncep.noaa.gov/data";
 	private static String dataPath = "C:/Dev/Applications/Radar/src/main/resources";	
@@ -244,7 +243,7 @@ public class RadarSiteDAO {
 			featureStore.addFeatures(collection);
 			transaction.commit();
 		} catch (Throwable t) {
-			logger.error("Exception", t);
+			logger.severe("Throwable: " + t.getMessage());
 			transaction.rollback();
 		} finally {
 			transaction.close();
@@ -272,7 +271,7 @@ public class RadarSiteDAO {
 			featureStore.addFeatures(collection);
 			transaction.commit();
 		} catch (Throwable t) {
-			logger.error("Exception", t);
+			logger.severe("Throwable: " + t.getMessage());
 			transaction.rollback();
 		} finally {
 			transaction.close();
@@ -453,7 +452,7 @@ public class RadarSiteDAO {
 	
 	public RadarSiteDTO nearest(double latitude, double longitude, double distance, String units) throws CQLException, IOException {
 		String filter = MessageFormat.format("DWITHIN(the_geom, POINT({0} {1}), {2}, {3})", Double.toString(longitude), Double.toString(latitude), Double.toString(distance), units);
-		logger.debug("filter: " + filter);
+		logger.info("filter: " + filter);
 		Query query = new Query(typeName, CQL.toFilter(filter));
 		SimpleFeatureCollection collection = this.featureSource.getFeatures(query);
 		SimpleFeatureIterator iterator = null;
@@ -491,7 +490,7 @@ public class RadarSiteDAO {
 	
 	public RadarSiteDTO read(String icao) throws IOException, CQLException {
 		String filter = MessageFormat.format("ICAO = {0}", "'" + icao.toUpperCase() + "'");
-		logger.debug("filter: " + filter);
+		logger.info("filter: " + filter);
 		Query query = new Query(typeName, CQL.toFilter(filter));
 		SimpleFeatureCollection collection = this.featureSource.getFeatures(query);
 		SimpleFeatureIterator iterator = null;
@@ -548,13 +547,15 @@ public class RadarSiteDAO {
 		InputStream inputStream = null;
 		GZIPInputStream gzipInputStream = null;
 		File tifFile = null;
+		GeoTiffReader reader = null;
+		GridCoverage2D coverage = null;
 		try {
 			String tempPath = MessageFormat.format("{0}/temp", dataPath);
-			logger.debug("tempPath: " + tempPath);
+			logger.info("tempPath: " + tempPath);
 			String gzFile = urlSpec.substring(urlSpec.lastIndexOf("/") + 1);
-			logger.debug("gzFile: " + gzFile);
+			logger.info("gzFile: " + gzFile);
 			String tifFileName = gzFile.replace(".gz", "");
-			logger.debug("tifFileName: " + tifFileName);
+			logger.info("tifFileName: " + tifFileName);
 			tifFile = new File(tifFileName);
 			inputStream = getRequestStream(urlSpec);
 			gzipInputStream = new GZIPInputStream(inputStream);
@@ -565,10 +566,10 @@ public class RadarSiteDAO {
 			inputStream = null;
 			IOUtils.writeEntireByteArray(inputBytes, tifFile.getAbsolutePath());
 			AbstractGridFormat format = new GeoTiffFormat();
-			GeoTiffReader reader = (GeoTiffReader)format.getReader(tifFile);
+			reader = (GeoTiffReader)format.getReader(tifFile);
 			CoordinateReferenceSystem crs = reader.getCoordinateReferenceSystem();
 			//System.out.println("CRS: " + crs.toWKT());
-			GridCoverage2D coverage = reader.read(null);
+			coverage = reader.read(null);
 			Envelope env = coverage.getEnvelope();
 			double[] lowerCorner = env.getLowerCorner().getCoordinate();
 			double[] upperCorner = env.getUpperCorner().getCoordinate();
@@ -580,7 +581,21 @@ public class RadarSiteDAO {
 	        dto.setWidth(image.getWidth());
 	        dto.setHeight(image.getHeight());
 			return dto;
-		} finally {			
+		} finally {
+			if (coverage != null) {
+				try {
+					coverage.dispose(true);
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.dispose();
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
+				}
+			}
 			if (gzipInputStream != null) {
 				IOUtils.closeQuietly(gzipInputStream);
 			}
@@ -588,8 +603,12 @@ public class RadarSiteDAO {
 				IOUtils.closeQuietly(inputStream);
 			}
 			if (tifFile != null) {
-				if (tifFile.exists()) {
-					tifFile.delete();
+				try {
+					if (tifFile.exists()) {
+						tifFile.delete();
+					}
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
 				}
 			}
 		}
@@ -600,13 +619,15 @@ public class RadarSiteDAO {
 		GZIPInputStream gzipInputStream = null;
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		File tifFile = null;
+		GeoTiffReader reader = null;
+		GridCoverage2D coverage = null;
 		try {
 			String tempPath = MessageFormat.format("{0}/temp", dataPath);
-			logger.debug("tempPath: " + tempPath);
+			logger.info("tempPath: " + tempPath);
 			String gzFile = urlSpec.substring(urlSpec.lastIndexOf("/") + 1);
-			logger.debug("gzFile: " + gzFile);
+			logger.info("gzFile: " + gzFile);
 			String tifFileName = gzFile.replace(".gz", "");
-			logger.debug("tifFileName: " + tifFileName);
+			logger.info("tifFileName: " + tifFileName);
 			tifFile = new File(tifFileName);
 			inputStream = getRequestStream(urlSpec);
 			gzipInputStream = new GZIPInputStream(inputStream);
@@ -617,13 +638,27 @@ public class RadarSiteDAO {
 			inputStream = null;
 			IOUtils.writeEntireByteArray(inputBytes, tifFile.getAbsolutePath());
 			AbstractGridFormat format = new GeoTiffFormat();
-			GeoTiffReader reader = (GeoTiffReader)format.getReader(tifFile);
-			GridCoverage2D coverage = reader.read(null);
+			reader = (GeoTiffReader)format.getReader(tifFile);
+			coverage = reader.read(null);
 	        RenderedImage image = coverage.getRenderedImage();
 	        byteArrayOutputStream = new ByteArrayOutputStream();
 	        ImageIO.write(image, "png", byteArrayOutputStream);	        
 			return byteArrayOutputStream.toByteArray();
-		} finally {			
+		} finally {
+			if (coverage != null) {
+				try {
+					coverage.dispose(true);
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.dispose();
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
+				}
+			}
 			if (gzipInputStream != null) {
 				IOUtils.closeQuietly(gzipInputStream);
 			}
@@ -634,8 +669,12 @@ public class RadarSiteDAO {
 				IOUtils.closeQuietly(byteArrayOutputStream);
 			}
 			if (tifFile != null) {
-				if (tifFile.exists()) {
-					tifFile.delete();
+				try {
+					if (tifFile.exists()) {
+						tifFile.delete();
+					}
+				} catch (Throwable t) {
+					logger.warning("Throwable: " + t.getMessage());
 				}
 			}
 		}
