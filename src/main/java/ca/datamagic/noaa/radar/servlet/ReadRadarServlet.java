@@ -43,7 +43,6 @@ public class ReadRadarServlet extends HttpServlet {
 				double doubleLatitude = Double.parseDouble(latitude);
 				double doubleLongitude = Double.parseDouble(longitude);
 				RadarSiteDAO dao = new RadarSiteDAO();
-				dao.openShapeFile();
 				RadarSiteDTO site = dao.nearest(doubleLatitude, doubleLongitude, 100, "statute miles");
 				String json = (new Gson()).toJson(site);
 				response.setContentType("application/json");
@@ -57,7 +56,6 @@ public class ReadRadarServlet extends HttpServlet {
 				String identifier = readMatcher.group("identifier");
 				logger.info("identifier: " + identifier);
 				RadarSiteDAO dao = new RadarSiteDAO();
-				dao.openShapeFile();
 				RadarSiteDTO site = dao.read(identifier);
 				String json = (new Gson()).toJson(site);
 				response.setContentType("application/json");

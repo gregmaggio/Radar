@@ -38,7 +38,6 @@ public class ListRadarUrlsServlet extends HttpServlet {
 				String identifier = listMatcher.group("identifier");
 				logger.info("identifier: " + identifier);
 				RadarSiteDAO dao = new RadarSiteDAO();
-				dao.openShapeFile();
 				List<String> urls = dao.listUrls(identifier);
 				String json = (new Gson()).toJson(urls);
 				response.setContentType("application/json");

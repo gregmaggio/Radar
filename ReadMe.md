@@ -1,6 +1,6 @@
 Running locally on docker
 
-mvn clean install -Pcontainer
+mvn clean install
 docker build -t radar .
 docker run -p 80:8080 radar
 

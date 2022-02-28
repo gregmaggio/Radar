@@ -29,7 +29,6 @@ public class ListRadarServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			RadarSiteDAO dao = new RadarSiteDAO();
-			dao.openShapeFile();
 			List<RadarSiteDTO> sites = dao.list();
 			String json = (new Gson()).toJson(sites);
 			response.setContentType("application/json");

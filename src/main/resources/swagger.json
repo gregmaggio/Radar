@@ -255,7 +255,40 @@
 				"longitude" : {
 					"type" : "number",
 					"format" : "double"
+				},
+				"siteInfo" : {
+					"$ref" : "#/definitions/RadarSiteInfoDTO"
 				}				
+			}
+		},
+		"RadarSiteInfoDTO" : {
+			"type" : "object",
+			"properties" : {
+				"crs" : {
+					"type" : "string"
+				},
+				"lowerCorner" : {
+					"type" : "array",
+					"items" : {
+						"type" : "number",
+						"format" : "double"
+					}
+				},
+				"upperCorner" : {
+					"type" : "array",
+					"items" : {
+						"type" : "number",
+						"format" : "double"
+					}
+				},
+				"width" : {
+					"type" : "number",
+					"format" : "integer"
+				},
+				"height" : {
+					"type" : "number",
+					"format" : "integer"
+				}
 			}
 		},
 		"RadarImageDTO" : {

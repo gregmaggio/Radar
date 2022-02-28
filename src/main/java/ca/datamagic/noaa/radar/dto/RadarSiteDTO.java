@@ -19,6 +19,7 @@ public class RadarSiteDTO {
 	private String equipment = null;
 	private Double latitude = null;
 	private Double longitude = null;
+	private RadarSiteInfoDTO siteInfo = null;
 	
 	public RadarSiteDTO() {
 		
@@ -32,10 +33,24 @@ public class RadarSiteDTO {
 		this.responsibleWFO = (String)feature.getAttribute("RESP_WFO");
 		this.wfo = (String)feature.getAttribute("WFO");
 		this.equipment = (String)feature.getAttribute("EQUIP");
-		//this.latitude = (Double)feature.getAttribute("LAT");
-		//this.longitude = (Double)feature.getAttribute("LON");
 		this.latitude = point.getY();
 		this.longitude = point.getX();
+		String crs = (String)feature.getAttribute("CRS");
+		Double lowerX = (Double)feature.getAttribute("LOWER_X");
+		Double lowerY = (Double)feature.getAttribute("LOWER_Y");
+		Double upperX = (Double)feature.getAttribute("UPPER_X");
+		Double upperY = (Double)feature.getAttribute("UPPER_Y");
+		Integer width = (Integer)feature.getAttribute("WIDTH");
+		Integer height = (Integer)feature.getAttribute("HEIGHT");
+		if ((crs != null) && (lowerX != null) && (lowerY != null) && (upperX != null) && (upperY != null) && (width != null) && (height != null)) {
+			RadarSiteInfoDTO siteInfo = new RadarSiteInfoDTO();
+			siteInfo.setCrs(crs);
+			siteInfo.setLowerCorner(new double[] { lowerX, lowerY });
+			siteInfo.setUpperCorner(new double[] { upperX, upperY });
+			siteInfo.setHeight(height);
+			siteInfo.setWidth(width);
+			this.siteInfo = siteInfo;
+		}
 	}
 	
 	public String getNexradSystem() {
@@ -100,5 +115,13 @@ public class RadarSiteDTO {
 	
 	public void setLongitude(Double newVal) {
 		this.longitude = newVal;
+	}
+	
+	public RadarSiteInfoDTO getSiteInfo() {
+		return this.siteInfo;
+	}
+	
+	public void setSiteInfo(RadarSiteInfoDTO newVal) {
+		this.siteInfo = newVal;
 	}
 }
