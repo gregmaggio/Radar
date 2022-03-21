@@ -10,18 +10,6 @@
 
     <name>Radar</name>
 
-	<repositories>
-		<repository>
-			<id>osgeo-nexus-releases</id>
-			<name>osgeo nexus</name>
-			<url>https://repo.osgeo.org/repository/release/</url>
-		</repository>
-	</repositories>
-
-	<properties>
-		<geotools.version>25.2</geotools.version>
-	</properties>
-
     <dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -39,61 +27,16 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.13.1</version>
 		</dependency>
-		
 		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-geotiff</artifactId>
-			<version>${geotools.version}</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-coverage</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-referencing</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-main</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-wkt</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-shapefile</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-cql</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>it.geosolutions.imageio-ext</groupId>
-			<artifactId>imageio-ext-tiff</artifactId>
-			<version>1.3.10</version>
-		</dependency>
-		<dependency>
-			<groupId>it.geosolutions.imageio-ext</groupId>
-			<artifactId>imageio-ext-cog-reader</artifactId>
-			<version>1.3.10</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-imaging</artifactId>
 			<version>1.0-alpha2</version>
 		</dependency>
-		
-		
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-servlet-api</artifactId>

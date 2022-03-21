@@ -5,14 +5,10 @@ package ca.datamagic.noaa.radar.servlet;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
-import org.geotools.referencing.factory.DeferredAuthorityFactory;
-import org.geotools.util.WeakCollectionCleaner;
 
 import ca.datamagic.noaa.radar.dao.RadarSiteDAO;
 
@@ -41,22 +37,5 @@ public class RadarContextListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		logger.info("contextDestroyed");
-		Set<Thread> threads = Thread.getAllStackTraces().keySet();
-		for (Thread thread : threads) {
-			logger.info("Thread: " + thread.getId() + ", " + thread.getName() + ", " + thread.getState());
-		}
-		try {
-			DeferredAuthorityFactory.exit();
-		} catch (Throwable t) {
-			logger.severe("Throwable: " + t.getMessage());
-		}
-		if (WeakCollectionCleaner.DEFAULT != null) {
-			try {
-				WeakCollectionCleaner.DEFAULT.exit();
-			} catch (Throwable t) {
-				logger.severe("Throwable: " + t.getMessage());
-			}
-		}
-		System.exit(0);
 	}
 }

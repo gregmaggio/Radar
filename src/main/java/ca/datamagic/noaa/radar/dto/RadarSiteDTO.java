@@ -3,9 +3,6 @@
  */
 package ca.datamagic.noaa.radar.dto;
 
-import org.locationtech.jts.geom.Point;
-import org.opengis.feature.simple.SimpleFeature;
-
 /**
  * @author Greg
  *
@@ -23,35 +20,7 @@ public class RadarSiteDTO {
 	
 	public RadarSiteDTO() {
 		
-	}
-	
-	public RadarSiteDTO(SimpleFeature feature) {
-		Point point = (Point)feature.getDefaultGeometry();
-		this.nexradSystem = (String)feature.getAttribute("NEXRAD");
-		this.icao = (String)feature.getAttribute("ICAO");
-		this.rdaLocation = (String)feature.getAttribute("RDA");
-		this.responsibleWFO = (String)feature.getAttribute("RESP_WFO");
-		this.wfo = (String)feature.getAttribute("WFO");
-		this.equipment = (String)feature.getAttribute("EQUIP");
-		this.latitude = point.getY();
-		this.longitude = point.getX();
-		String crs = (String)feature.getAttribute("CRS");
-		Double lowerX = (Double)feature.getAttribute("LOWER_X");
-		Double lowerY = (Double)feature.getAttribute("LOWER_Y");
-		Double upperX = (Double)feature.getAttribute("UPPER_X");
-		Double upperY = (Double)feature.getAttribute("UPPER_Y");
-		Integer width = (Integer)feature.getAttribute("WIDTH");
-		Integer height = (Integer)feature.getAttribute("HEIGHT");
-		if ((crs != null) && (lowerX != null) && (lowerY != null) && (upperX != null) && (upperY != null) && (width != null) && (height != null)) {
-			RadarSiteInfoDTO siteInfo = new RadarSiteInfoDTO();
-			siteInfo.setCrs(crs);
-			siteInfo.setLowerCorner(new double[] { lowerX, lowerY });
-			siteInfo.setUpperCorner(new double[] { upperX, upperY });
-			siteInfo.setHeight(height);
-			siteInfo.setWidth(width);
-			this.siteInfo = siteInfo;
-		}
-	}
+	}	
 	
 	public String getNexradSystem() {
 		return this.nexradSystem;

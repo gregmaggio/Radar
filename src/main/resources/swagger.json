@@ -175,7 +175,7 @@
 					"200" : {
 						"description" : "OK",
 						"schema" : {
-							"$ref" : "#/definitions/RadarImageDTO"
+							"$ref" : "#/definitions/RadarSiteInfoDTO"
 						}
 					},
 					"401" : {
@@ -189,7 +189,7 @@
 					}
 				}
 			}
-		},
+		},		
 		"/api/image" : {
 			"post" : {
 				"tags" : ["radar-controller"],

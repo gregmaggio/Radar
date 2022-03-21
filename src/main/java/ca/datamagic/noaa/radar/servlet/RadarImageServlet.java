@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import ca.datamagic.noaa.radar.dao.RadarSiteDAO;
-import ca.datamagic.noaa.radar.dto.RadarImageDTO;
+import ca.datamagic.noaa.radar.dto.RadarSiteDTO;
 import ca.datamagic.util.IOUtils;
 
 /**
@@ -40,10 +40,15 @@ public class RadarImageServlet extends HttpServlet {
 				if (metaDataMatcher.find()) {
 					logger.info("metaData");				
 					RadarSiteDAO dao = new RadarSiteDAO();
-					RadarImageDTO radarImage = dao.readImageMetaData(urlSpec);
-					String json = (new Gson()).toJson(radarImage);
-					response.setContentType("application/json");
-					response.getWriter().println(json);
+					String icao = dao.readICAOFromUrl(urlSpec);
+					if ((icao != null) && (icao.length() > 0)) {
+						RadarSiteDTO site = dao.read(icao);
+						if ((site != null) && (site.getSiteInfo() != null)) {
+							String json = (new Gson()).toJson(site.getSiteInfo());
+							response.setContentType("application/json");
+							response.getWriter().println(json);
+						}
+					}
 					return;
 				}
 			}
@@ -52,7 +57,9 @@ public class RadarImageServlet extends HttpServlet {
 				RadarSiteDAO dao = new RadarSiteDAO();
 				byte[] imageBytes = dao.readImageBytes(urlSpec);
 				response.setContentType("image/png");
-				response.getOutputStream().write(imageBytes);
+				if (imageBytes != null) {
+					response.getOutputStream().write(imageBytes);
+				}
 				return;
 			}
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
