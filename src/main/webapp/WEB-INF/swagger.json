@@ -9,7 +9,7 @@
 		}
 	},
 	"host" : "{{host}}",
-	"basePath" : "{{basePath}}",
+	"basePath" : "",
 	"tags" : [{
 			"name" : "radar-controller",
 			"description" : "Radar Controller"

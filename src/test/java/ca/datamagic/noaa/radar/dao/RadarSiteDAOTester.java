@@ -1,12 +1,10 @@
 package ca.datamagic.noaa.radar.dao;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -16,15 +14,10 @@ import ca.datamagic.noaa.radar.dto.RadarSiteDTO;
 public class RadarSiteDAOTester {
 	private static final Logger logger = LogManager.getLogger(RadarSiteDAOTester.class);
 	
-	@BeforeClass
-	public static void setupBeforeClass() throws IOException {
-		RadarSiteDAO.initialize("C:/Dev/Applications/Radar/src/main/resources");
-	}
-	
 	@Test
 	public void test1() throws Exception {
-		double latitude = 47.6129432;
-	    double longitude = -122.4821503;
+		double latitude = 33.828704833984375;
+	    double longitude = -84.51777648925781;
 	    double distance = 100;
 	    String units = "statute miles";
 		RadarSiteDAO dao = new RadarSiteDAO();
@@ -47,5 +40,11 @@ public class RadarSiteDAOTester {
 		logger.info(gson.toJson(sites));
 	}
 	
-	
+	@Test
+	public void test3() throws Exception {
+		RadarSiteDAO dao = new RadarSiteDAO();
+		List<String> urls = dao.listUrls("KRIW");
+		Gson gson = new Gson();
+		logger.info(gson.toJson(urls));
+	}
 }

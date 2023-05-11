@@ -5,9 +5,9 @@ package ca.datamagic.noaa.radar.dao;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -40,11 +40,15 @@ public class RadarSiteDAO {
 	private static final String RADAR_DATA_URL = "https://mrms.ncep.noaa.gov/data";
 	private static RadarSiteDTO[] sites = null;
 	
-	public static synchronized void initialize(String dataPath) throws IOException {
-		Gson gson = new Gson();
-		FileReader reader = new FileReader(MessageFormat.format("{0}/radar.json", dataPath));
-		RadarSiteDAO.sites = (RadarSiteDTO[])gson.fromJson(reader, RadarSiteDTO[].class);
-		reader.close();
+	static {
+		try {
+			InputStream inputStream = RadarSiteDAO.class.getClassLoader().getResourceAsStream("radar.json");
+			Gson gson = new Gson();			
+			sites = (RadarSiteDTO[])gson.fromJson(new InputStreamReader(inputStream), RadarSiteDTO[].class);
+			inputStream.close();
+		} catch (IOException ex) {
+			logger.severe("IOException: " + ex.getMessage());
+		}
 	}
 	
 	public List<RadarSiteDTO> list() {

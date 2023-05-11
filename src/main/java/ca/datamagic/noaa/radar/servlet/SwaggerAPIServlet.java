@@ -6,7 +6,7 @@ package ca.datamagic.noaa.radar.servlet;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -26,21 +26,22 @@ public class SwaggerAPIServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
-			String requestUrl = request.getRequestURL().toString();
-			logger.info("requestUrl: " + requestUrl);
-			URL url = new URL(requestUrl);
+			URI uri = null;
+			try {
+				uri = new URI(request.getRequestURL().toString());
+			} catch (Throwable t) {
+				uri = null;
+			}
 			StringBuffer host = new StringBuffer();
-			host.append(url.getHost());
-			if ((url.getPort() != -1) && (url.getPort() != 80) && (url.getPort() != 443)) {
-				host.append(":");
-				host.append(Integer.toString(url.getPort()));
-			}
-			String basePath = "";
-			if (requestUrl.toLowerCase().contains("/radar/")) {
-				basePath = "/Radar";
-			}
-			InputStream input = getServletContext().getResourceAsStream("/WEB-INF/classes/swagger.json");
-			String theString = IOUtils.toString(input, "UTF-8").replace("{{host}}", host.toString()).replace("{{basePath}}", basePath);
+			if (uri != null) {
+				host.append(uri.getHost());
+				if ((uri.getPort() != -1) && (uri.getPort() != 80) && (uri.getPort() != 443)) {
+					host.append(":");
+					host.append(Integer.toString(uri.getPort()));
+				}
+			}		
+			InputStream input = getServletContext().getResourceAsStream("/WEB-INF/swagger.json");
+			String theString = IOUtils.toString(input, "UTF-8").replace("{{host}}", host.toString()); 
 			input.close();
 			response.setContentType("application/json");
 			response.getWriter().println(theString);

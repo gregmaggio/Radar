@@ -1,13 +1,13 @@
 $(function() {
   var springfox = {
     "baseUrl": function() {
-    	var protocol = window.location.protocol;
-        var hostname = window.location.hostname;
-        var pathname = window.location.pathname;
-        if (pathname.toLowerCase().indexOf("Radar") > -1) {
-			pathname = "/Radar";
-		}
-		return protocol + "//" + hostname + pathname;
+	var parser = document.createElement('a');
+	parser.href = window.location.href;
+	var rootUrl = parser.protocol + "//" + parser.hostname;
+	if ((parser.port != 80) && (parser.port != -1)) {
+		rootUrl += ":" + parser.port.toString();
+	}
+	return rootUrl	
     },
     "securityConfig": function(cb) {
       $.getJSON(this.baseUrl() + "/swagger-resources/configuration/security", function(data) {
